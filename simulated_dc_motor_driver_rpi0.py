@@ -1,0 +1,32 @@
+from multiprocessing import Process, Queue
+import time
+import socket
+import struct
+from threading import Thread
+import numpy as np
+import json
+
+from dc_motor_driver.simulated_system import simulated_system
+from dc_motor_driver.client import client
+
+
+if __name__ == "__main__":
+    dc_motor_driver_data_path = "./dc_motor_driver/dc_motor_driver.json"
+    dc_motor_driver_data = json.load(open(dc_motor_driver_data_path))
+
+    debug = False
+
+    q_ss2cli = Queue()
+
+    process_simulated_system = Thread(target=simulated_system, 
+                                    args=(q_ss2cli, dc_motor_driver_data, False),
+                                    kwargs={"show":True, "debug":debug})
+    process_client           = Thread(target=client,
+                                    args=(q_ss2cli, dc_motor_driver_data), 
+                                    kwargs={"show":True, "debug":debug})
+
+    process_simulated_system.start()
+    process_client.start()
+
+    # process_simulated_system.join()
+    # process_client.join()

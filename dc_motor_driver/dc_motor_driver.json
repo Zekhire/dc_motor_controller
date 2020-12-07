@@ -1,0 +1,62 @@
+{
+    "rpi_dc_motor_controller":
+    {
+        "in1": 4,
+        "in2": 3,
+        "en": 2,
+        "pwm_freq": 1000,
+        "v": 12
+    },
+    "pi_controller":
+    {
+        "K_p": 10, 
+        "T_i": 0.5, 
+        "init": 0,
+        "sat": 12,
+        "T_a": 2,
+        "anti": 0
+    },
+    "encoder":
+    {
+        "a_pin": 21,
+        "b_pin": 20,
+        "ipr": 381
+    },
+    "tachometer":
+    {
+        "dt": 0.001
+    },
+    "ad_converter":
+    {
+        "Ts": 0.04
+    },
+    "client":
+    {
+        "server_ip_old": "192.168.0.103",
+        "server_ip": "192.168.1.104",
+        "server_port": 50001
+    },
+    "simulation": true,
+    "dc_motor_simulation":
+    {
+        "dt": 0.01,
+        "electrical":
+        {
+            "R": 25,
+            "L": 0.182,
+            "K_e": 0.1
+        },
+        "mechanical":
+        {
+            "J": 0.005,
+            "K_t": 0.1,
+            "K_f": 0.0000000138
+        },
+        "initial":
+        {
+            "i": 0,
+            "w_m": 0,
+            "theta_m": 0
+        }
+    }
+}
