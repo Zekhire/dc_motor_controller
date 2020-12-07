@@ -7,6 +7,8 @@ import queue
 import sys
 
 import datetime
+import warnings
+warnings.filterwarnings("ignore")
 
 
 def date_conversion(t_sample, date, relative_time):

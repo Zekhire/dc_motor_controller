@@ -17,12 +17,13 @@ if __name__ == "__main__":
     debug = False
 
     q_ss2cli = Queue()
+    q_cli2ss = Queue()
 
     process_simulated_system = Thread(target=simulated_system, 
-                                    args=(q_ss2cli, dc_motor_driver_data, False),
+                                    args=(q_ss2cli, q_cli2ss, dc_motor_driver_data, False),
                                     kwargs={"show":True, "debug":debug})
     process_client           = Thread(target=client,
-                                    args=(q_ss2cli, dc_motor_driver_data), 
+                                    args=(q_ss2cli, q_cli2ss, dc_motor_driver_data), 
                                     kwargs={"show":True, "debug":debug})
 
     process_simulated_system.start()

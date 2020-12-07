@@ -1,7 +1,7 @@
 import json
 import socket
 import struct
-
+import threading
 import sys
 
 
@@ -16,7 +16,62 @@ def convert_to_bytes(data, safe_string_length):
     return data_frame
 
 
-def client(q_ta2cli, dc_motor_driver_data, **kwargs):
+def receive(sock, q_cli2ss, **kwargs):
+    received = 1
+    # Communication loop
+    while True:
+        try:
+            data_frame = sock.recv(64)                               # receive data (2 floats)
+            if data_frame:
+                data = data_frame.decode("utf-8")
+                data_split = data.split()
+                
+                try:
+                    data0 = float(data_split[0])    # w rample
+                except ValueError:
+                    continue
+
+                q_cli2ss.put(data0)
+
+                if "debug" in kwargs.keys() and kwargs["debug"]:
+                    print("Client: Received", received, data0)
+                    received += 1
+
+        except socket.error:
+            break
+
+
+def send(sock, q_ss2cli, **kwargs):
+    # Set helping variables
+    safe_string_length = 64
+    sended = 1
+
+    # Communication loop
+    while True:
+        try:
+            # Get data from AD converter
+            data_sample      = q_ss2cli.get()
+            data_sample_ref  = q_ss2cli.get()
+            data_sample_time = q_ss2cli.get()
+
+            data = [data_sample, data_sample_ref, data_sample_time]
+
+            # Convert data to bytes and send to server
+            data_frame = convert_to_bytes(data, safe_string_length)
+
+            # Send data to server
+            sock.sendall(data_frame)
+            if "debug" in kwargs.keys() and kwargs["debug"]:
+                print("Client: Sended", sended, data_sample, round(data_sample_time, 3))
+                sended += 1
+                
+        except socket.error:                                            # end if socket error
+            print('Client: Disconnected with server!')
+            exit()
+            break
+
+
+def client(q_ss2cli, q_cli2ss, dc_motor_driver_data, **kwargs):
     if "show" in kwargs.keys() and kwargs["show"]:
         print("Client: Running")
 
@@ -29,9 +84,6 @@ def client(q_ta2cli, dc_motor_driver_data, **kwargs):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (server_ip, server_port)                           # IP and port of server
 
-    # Set helping variables
-    safe_string_length = 64
-
     # Try to connect
     try:
         sock.connect(server_address)
@@ -43,28 +95,8 @@ def client(q_ta2cli, dc_motor_driver_data, **kwargs):
     if "show" in kwargs.keys() and kwargs["show"]:
         print("Client: Main loop start")
 
-    sended = 1
 
-    # Communication loop
-    while True:
-        try:
-            # Get data from AD converter
-            data_sample      = q_ta2cli.get()
-            data_sample_ref  = q_ta2cli.get()
-            data_sample_time = q_ta2cli.get()
-
-            data = [data_sample, data_sample_ref, data_sample_time]
-
-            # Convert data to bytes and send to server
-            data_frame = convert_to_bytes(data, safe_string_length)
-
-            # Send data to server
-            sock.sendall(data_frame)
-            if "debug" in kwargs.keys() and kwargs["debug"]:
-                print("Client: Sended", sended, data_sample, round(data_sample_time, 3))
-                sended += 1
-        except socket.error:                                            # end if socket error
-            print('Client: Disconnected with server!')
-            exit()
-            break
-
+    send_thread    = threading.Thread(target=send,    args=(sock, q_ss2cli,))
+    receive_thread = threading.Thread(target=receive, args=(sock, q_cli2ss,))
+    send_thread.start()
+    receive_thread.start()

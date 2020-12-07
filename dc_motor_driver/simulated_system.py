@@ -6,7 +6,6 @@ sys.path.insert(1, './models')
 sys.path.insert(1, '../models')
 from pi_controller import PI_Controller
 from dc_motor_model_bs import DC_Motor
-from reference_signal import Speed_Reference_Signal
 
 import sys
 sys.path.insert(1, './offline_substitution_modules')
@@ -21,6 +20,7 @@ import atexit
 
 sys.path.insert(1, './dc_motor_driver')
 from emergency_script import emergency
+import queue
 
 
 def get_w_ref_sample(reference_signal, Ts_signal, t_max, time_start, time_stop):
@@ -31,18 +31,11 @@ def get_w_ref_sample(reference_signal, Ts_signal, t_max, time_start, time_stop):
     return w_ref_sample
 
 
-def simulated_system(q_ss2cli, dc_motor_driver_data, rapidly=False, **kwargs):
+def simulated_system(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **kwargs):
     # Input desired desired and actual speed to PI controller
     # and set PWM and DC supply to control DC motor
     if "show" in kwargs.keys() and kwargs["show"]:
         print("PI controller: Running")
-
-    # Prepare reference signal
-    ref_signal = Speed_Reference_Signal()
-    simulation_data = ref_signal.get_simulation_data()
-    w_ref     = simulation_data["w_ref"]
-    t_max     = simulation_data["t_max"]
-    Ts_signal = simulation_data["dt"]
 
     # Create PI controller object
     pi_controller_data = dc_motor_driver_data["pi_controller"]
@@ -56,6 +49,9 @@ def simulated_system(q_ss2cli, dc_motor_driver_data, rapidly=False, **kwargs):
     # Get "sampling period"
     ad_converter_data = dc_motor_driver_data["ad_converter"]
     Ts = ad_converter_data["Ts"]
+
+    # Initial w ref value
+    w_ref_sample = 0
 
     # Get time of script start
     time_pi_controller_start = time.time()
@@ -82,7 +78,14 @@ def simulated_system(q_ss2cli, dc_motor_driver_data, rapidly=False, **kwargs):
             continue
 
         # Get sample of w_ref
-        w_ref_sample = get_w_ref_sample(w_ref, Ts_signal, t_max, time_pi_controller_start, w_actual_sample_time)
+
+
+        try:
+            w_ref_sample_new = q_cli2ss.get(timeout=0)
+        except queue.Empty:
+            w_ref_sample_new = w_ref_sample
+
+        w_ref_sample = w_ref_sample_new
 
         # PI controller control
         w_error = w_ref_sample - w_actual_sample                  # Get speed error
