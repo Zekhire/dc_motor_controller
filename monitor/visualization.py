@@ -48,11 +48,11 @@ def controll_visualization(q_s2v, monitor_data, **kwargs):
         ax.set_xlabel('time [s]')
     else:
         ax.set_xlabel('date')
-    ax.set_ylabel('w [rad/s]')
+    ax.set_ylabel('ω[rad/s]')
 
     # Get handles for axes
-    ln0, = plt.plot([], [], 'b-o', label="w", markersize=3)
-    ln1, = plt.step([], [], 'r-',  label="w ref", where='post')
+    ln0, = plt.plot([], [], 'b-o', label="ω", markersize=3)
+    ln1, = plt.step([], [], 'r-',  label="ω ref", where='post')
 
     # Add legend
     ax.legend(loc="upper right")
