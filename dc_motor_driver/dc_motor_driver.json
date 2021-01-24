@@ -33,7 +33,8 @@
     "client":
     {
         "server_ip_old": "192.168.0.103",
-        "server_ip": "192.168.1.104",
+        "server_ip_older": "192.168.1.104",
+        "server_ip": "192.168.1.105",
         "server_port": 50001
     },
     "simulation": true,
