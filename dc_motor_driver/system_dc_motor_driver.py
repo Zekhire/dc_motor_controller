@@ -48,6 +48,8 @@ def rotation_decode_B(in_B):
 
 
 def system(dc_motor_driver_data, rapidly=False, **kwargs):
+    global counter
+    global counter_old
     # Input desired desired and actual speed to PI controller
     # and set PWM and DC supply to control DC motor
     if "show" in kwargs.keys() and kwargs["show"]:
@@ -92,7 +94,7 @@ def system(dc_motor_driver_data, rapidly=False, **kwargs):
     atexit.register(emergency, p, in1, in2)
 
     # Initial w ref value
-    w_ref_sample = 4*np.pi
+    w_ref_sample = 8*np.pi
     w_actual_sample = 0
 
     # Get time of script start
@@ -115,6 +117,8 @@ def system(dc_motor_driver_data, rapidly=False, **kwargs):
         theta_m_old    = counter_old*2*np.pi/ipr
 
         w_actual_sample = (theta_m_actual - theta_m_old)/dt
+        counter_old = counter
+
 
         # PI controller control
         w_error = w_ref_sample - w_actual_sample                  # Get speed error
@@ -135,12 +139,13 @@ def system(dc_motor_driver_data, rapidly=False, **kwargs):
 
         # Compute duty cycle
         dc = int(abs(v_s)*100/v)
+        print("vs", v_s, "dc", dc, "werror", w_error, "desired rad/s", w_ref_sample, "actual rad/s", w_actual_sample, counter, counter_old)
 
         # Change PWM duty cycle
         p.ChangeDutyCycle(dc)
 
         # Send simulation data to client
-        print(w_actual_sample)
+        print(w_actual_sample, "rad/s")
 
         # Update time
         w_actual_sample_time_old = w_actual_sample_time
@@ -152,7 +157,7 @@ def system(dc_motor_driver_data, rapidly=False, **kwargs):
 
 
 if __name__ == "__main__":
-    dc_motor_driver_data_path = ".\dc_motor_driver.json"
+    dc_motor_driver_data_path = "dc_motor_driver.json"
     dc_motor_driver_data = json.load(open(dc_motor_driver_data_path))
     
     system(dc_motor_driver_data, show=True, debug=True)

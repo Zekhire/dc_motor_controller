@@ -5,15 +5,15 @@
         "in2": 3,
         "en": 2,
         "pwm_freq": 1000,
-        "v": 5
+        "v": 12
     },
     "pi_controller":
     {
-        "K_p": 10, 
-        "T_i": 0.5, 
+        "K_p": 0.05, 
+        "T_i": 1, 
         "init": 0,
         "sat": 12,
-        "T_a": 2,
+        "T_a": 0.3,
         "anti": 0
     },
     "encoder":
@@ -24,7 +24,7 @@
     },
     "tachometer":
     {
-        "Td": 0.001
+        "Td": 0.04
     },
     "ad_converter":
     {
