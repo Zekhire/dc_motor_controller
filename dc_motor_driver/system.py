@@ -75,6 +75,7 @@ def simulated_system(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **
     GPIO.setup(in2, GPIO.OUT)   # Run backward
     GPIO.setup(en,  GPIO.OUT)   # PWM pin
     p = GPIO.PWM(en, pwm_freq)
+    p.start(0)
 
     # Encoder
     encoder_data = dc_motor_driver_data["encoder"]
@@ -85,6 +86,10 @@ def simulated_system(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **
     # setup an event detection threads for the A and B encoder switches
     GPIO.add_event_detect(in_A, GPIO.RISING, callback=rotation_decode_A)
     GPIO.add_event_detect(in_B, GPIO.RISING, callback=rotation_decode_B)
+
+
+    # Set emergency function at script exit
+    atexit.register(emergency, p, in1, in2)
 
     # Initial w ref value
     w_ref_sample = 0
@@ -97,7 +102,7 @@ def simulated_system(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **
 
     if "show" in kwargs.keys() and kwargs["show"]:
         print("PI controller: Main loop start")
-        
+
     while True:
         # We can change this to get uniform time from one place
         # instead of letting every script have its own clock

@@ -3,7 +3,7 @@
 
 import RPi.GPIO as GPIO          
 from time import sleep
-
+from emergency_script import emergency
 
 counter = 0
 
@@ -49,6 +49,10 @@ GPIO.output(in2,GPIO.LOW)
 p=GPIO.PWM(en,1000)
 
 p.start(25)
+
+
+# Set emergency function at script exit
+atexit.register(emergency, p, in1, in2)
 
 print("\n")
 print("The default speed & direction of motor is LOW & Forward.....")
