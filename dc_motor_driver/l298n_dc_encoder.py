@@ -3,11 +3,14 @@
 
 import RPi.GPIO as GPIO          
 from time import sleep
+import time
 import atexit
 from emergency_script import emergency
+import numpy as np
 
 counter = 0
-
+counter_old = 0
+ipr = 300
 
 def rotation_decode_A(in_A):
     global counter
@@ -62,9 +65,21 @@ print("\n")
 
 x = "f"
 
+speed = 0
+time_start = time.time()
+
+
 while(1):
-    print(counter)
+    print(counter, speed)
     sleep(0.04)
+
+    time_stop = time.time()
+    dt = time_stop-time_start
+    speed = (counter*2*np.pi/ipr - counter_old*2*np.pi/ipr)/dt
+
+    counter_old = counter
+    time_start = time_stop
+
     #x=input()
     
     if x=='r':
