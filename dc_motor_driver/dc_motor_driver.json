@@ -20,11 +20,11 @@
     {
         "a_pin": 21,
         "b_pin": 20,
-        "ipr": 381
+        "ipr": 300
     },
     "tachometer":
     {
-        "dt": 0.001
+        "Td": 0.001
     },
     "ad_converter":
     {
