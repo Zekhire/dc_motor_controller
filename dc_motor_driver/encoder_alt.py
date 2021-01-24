@@ -8,13 +8,13 @@ counter = 0
 def rotation_decode_A(in_A):
     global counter
     Switch_B = GPIO.input(in_B)
-    counter += Switch_B
+    counter -= Switch_B
     
     
 def rotation_decode_B(in_B):
     global counter
     Switch_A = GPIO.input(in_A)
-    counter -= Switch_A
+    counter += Switch_A
 
 
 # GPIO Ports
@@ -35,17 +35,17 @@ def encoder():
     time_start = time.time()
     i = 0
     while(True):
-        sleep(0.1)
+        sleep(0.04)
         i+=1
         #print(counter)
         #continue
     
-        #time_stop = time.time()
+        time_stop = time.time()
 
-        #dt = time_stop - time_start
+        dt = time_stop - time_start
         #if dt >= interval:
-        print(counter)
-            #time_start = time_stop
+        print(counter, dt)
+        time_start = time_stop
         continue
 
         if counter%300 == 0:

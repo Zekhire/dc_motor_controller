@@ -87,7 +87,7 @@ while(1):
         GPIO.output(in1,GPIO.HIGH)
         GPIO.output(in2,GPIO.LOW)
         temp1=1
-        x='z'
+        x='f'
 
     elif x=='b':
         print("backward")
