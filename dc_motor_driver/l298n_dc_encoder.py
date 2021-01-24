@@ -49,7 +49,7 @@ GPIO.output(in2,GPIO.LOW)
 
 p=GPIO.PWM(en,1000)
 
-p.start(25)
+p.start(20)
 
 
 # Set emergency function at script exit
