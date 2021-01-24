@@ -115,7 +115,7 @@ def controll_visualization(q_s2v, monitor_data, **kwargs):
 
                 # Set x/y lims
                 ax.set_xlim(t_local[0], t_local[-1])
-                ax.set_ylim(0, 120)
+                ax.set_ylim(-70, 70)
 
                 # reference speed plot
                 ln1.set_data(t_local, w_ref_local)

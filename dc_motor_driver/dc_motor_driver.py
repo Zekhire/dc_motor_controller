@@ -22,7 +22,6 @@ sys.path.insert(1, './dc_motor_driver')
 from emergency_script import emergency
 import queue
 
-
 # global variables (ultimately veeeeeeeery veeery ugly :<)
 counter_old = 0
 counter = 0
@@ -47,7 +46,7 @@ def rotation_decode_B(in_B):
     counter += Switch_A
 
 
-def system(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **kwargs):
+def dc_motor_driver(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **kwargs):
     global counter
     global counter_old
     # Input desired desired and actual speed to PI controller
@@ -89,12 +88,11 @@ def system(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **kwargs):
     GPIO.add_event_detect(in_A, GPIO.RISING, callback=rotation_decode_A)
     GPIO.add_event_detect(in_B, GPIO.RISING, callback=rotation_decode_B)
 
-
     # Set emergency function at script exit
     atexit.register(emergency, p, in1, in2)
 
     # Initial w ref value
-    w_ref_sample = 8*np.pi
+    w_ref_sample = 0
     w_actual_sample = 0
 
     # Get time of script start
@@ -145,7 +143,6 @@ def system(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **kwargs):
 
         # Compute duty cycle
         dc = int(abs(v_s)*100/v)
-        #print("vs", v_s, "dc", dc, "werror", w_error, "desired rad/s", w_ref_sample, "actual rad/s", w_actual_sample, counter, counter_old)
 
         # Change PWM duty cycle
         p.ChangeDutyCycle(dc)
@@ -168,4 +165,5 @@ if __name__ == "__main__":
     dc_motor_driver_data_path = "dc_motor_driver.json"
     dc_motor_driver_data = json.load(open(dc_motor_driver_data_path))
     
-    system(dc_motor_driver_data, show=True, debug=True)
+    dc_motor_driver(queue.Queue(), queue.Queue(),
+                    dc_motor_driver_data, show=True, debug=True)

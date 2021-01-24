@@ -6,7 +6,7 @@ from threading import Thread
 import numpy as np
 import json
 
-from dc_motor_driver.system_dc_motor_driver import system
+from dc_motor_driver.dc_motor_driver import dc_motor_driver
 from dc_motor_driver.client import client
 
 
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     q_ss2cli = Queue()
     q_cli2ss = Queue()
 
-    process_simulated_system = Thread(target=system, 
+    process_simulated_system = Thread(target=dc_motor_driver, 
                                     args=(q_ss2cli, q_cli2ss, dc_motor_driver_data, False),
                                     kwargs={"show":True, "debug":debug})
     process_client           = Thread(target=client,

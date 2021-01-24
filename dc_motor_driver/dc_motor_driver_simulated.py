@@ -31,7 +31,7 @@ def get_w_ref_sample(reference_signal, Ts_signal, t_max, time_start, time_stop):
     return w_ref_sample
 
 
-def simulated_system(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **kwargs):
+def dc_motor_driver_simulated(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **kwargs):
     # Input desired desired and actual speed to PI controller
     # and set PWM and DC supply to control DC motor
     if "show" in kwargs.keys() and kwargs["show"]:
@@ -133,5 +133,5 @@ if __name__ == "__main__":
     dc_motor_driver_data_path = ".\dc_motor_driver.json"
     dc_motor_driver_data = json.load(open(dc_motor_driver_data_path))
     
-    simulated_system(queue_substitution.Queue(),
-                     dc_motor_driver_data, show=True, debug=True)
+    dc_motor_driver_simulated(queue_substitution.Queue(),
+                                dc_motor_driver_data, show=True, debug=True)
