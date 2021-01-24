@@ -47,7 +47,7 @@ def rotation_decode_B(in_B):
     counter += Switch_A
 
 
-def system(dc_motor_driver_data, rapidly=False, **kwargs):
+def system(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **kwargs):
     global counter
     global counter_old
     # Input desired desired and actual speed to PI controller
@@ -111,14 +111,20 @@ def system(dc_motor_driver_data, rapidly=False, **kwargs):
         w_actual_sample_time = time.time()
         dt = w_actual_sample_time - w_actual_sample_time_old    # Compute real delta time
 
-
         # Get sample of w_ref
+        try:
+            w_ref_sample_new = q_cli2ss.get(timeout=0)
+        except queue.Empty:
+            w_ref_sample_new = w_ref_sample
+
+        w_ref_sample = w_ref_sample_new
+
+        # Get sample of w_actual
         theta_m_actual = counter    *2*np.pi/ipr
         theta_m_old    = counter_old*2*np.pi/ipr
 
         w_actual_sample = (theta_m_actual - theta_m_old)/dt
         counter_old = counter
-
 
         # PI controller control
         w_error = w_ref_sample - w_actual_sample                  # Get speed error
@@ -143,6 +149,11 @@ def system(dc_motor_driver_data, rapidly=False, **kwargs):
 
         # Change PWM duty cycle
         p.ChangeDutyCycle(dc)
+
+        # Send simulation data to client
+        q_ss2cli.put(w_actual_sample)
+        q_ss2cli.put(w_ref_sample)
+        q_ss2cli.put(w_actual_sample_time)
 
         # Send simulation data to client
         print(w_actual_sample, "rad/s")

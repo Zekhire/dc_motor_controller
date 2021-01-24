@@ -92,7 +92,7 @@ def simulated_system(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **
     atexit.register(emergency, p, in1, in2)
 
     # Initial w ref value
-    w_ref_sample = 4*np.pi
+    w_ref_sample = 0
     w_actual_sample = 0
     sended = 1
 
@@ -146,8 +146,6 @@ def simulated_system(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **
 
         # Change PWM duty cycle
         p.ChangeDutyCycle(dc)
-
-
 
         # Send simulation data to client
         q_ss2cli.put(w_actual_sample)
