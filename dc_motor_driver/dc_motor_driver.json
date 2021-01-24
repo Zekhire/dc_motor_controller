@@ -5,7 +5,7 @@
         "in2": 3,
         "en": 2,
         "pwm_freq": 1000,
-        "v": 12
+        "v": 5
     },
     "pi_controller":
     {
