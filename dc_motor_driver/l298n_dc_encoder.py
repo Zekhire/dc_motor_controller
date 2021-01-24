@@ -15,13 +15,13 @@ ipr = 300
 def rotation_decode_A(in_A):
     global counter
     Switch_B = GPIO.input(in_B)
-    counter += Switch_B
+    counter -= Switch_B
     
     
 def rotation_decode_B(in_B):
     global counter
     Switch_A = GPIO.input(in_A)
-    counter -= Switch_A
+    counter += Switch_A
 
 
 
