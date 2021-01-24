@@ -3,6 +3,7 @@
 
 import RPi.GPIO as GPIO          
 from time import sleep
+import atexit
 from emergency_script import emergency
 
 counter = 0
