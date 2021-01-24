@@ -145,7 +145,7 @@ def system(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **kwargs):
 
         # Compute duty cycle
         dc = int(abs(v_s)*100/v)
-        print("vs", v_s, "dc", dc, "werror", w_error, "desired rad/s", w_ref_sample, "actual rad/s", w_actual_sample, counter, counter_old)
+        #print("vs", v_s, "dc", dc, "werror", w_error, "desired rad/s", w_ref_sample, "actual rad/s", w_actual_sample, counter, counter_old)
 
         # Change PWM duty cycle
         p.ChangeDutyCycle(dc)
@@ -154,9 +154,6 @@ def system(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **kwargs):
         q_ss2cli.put(w_actual_sample)
         q_ss2cli.put(w_ref_sample)
         q_ss2cli.put(w_actual_sample_time)
-
-        # Send simulation data to client
-        print(w_actual_sample, "rad/s")
 
         # Update time
         w_actual_sample_time_old = w_actual_sample_time
