@@ -15,13 +15,13 @@ ipr = 300
 def rotation_decode_A(in_A):
     global counter
     Switch_B = GPIO.input(in_B)
-    counter += Switch_B
+    counter -= Switch_B
     
     
 def rotation_decode_B(in_B):
     global counter
     Switch_A = GPIO.input(in_A)
-    counter -= Switch_A
+    counter += Switch_A
 
 
 
@@ -52,7 +52,7 @@ GPIO.output(in2,GPIO.LOW)
 
 p=GPIO.PWM(en,1000)
 
-p.start(20)
+p.start(90)
 
 
 # Set emergency function at script exit
@@ -75,7 +75,7 @@ while(1):
 
     time_stop = time.time()
     dt = time_stop-time_start
-    speed = (counter*2*np.pi/ipr - counter_old*2*np.pi/ipr)/dt
+    speed = (counter/ipr - counter_old/ipr)/dt
 
     counter_old = counter
     time_start = time_stop
