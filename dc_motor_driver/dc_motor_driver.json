@@ -10,7 +10,7 @@
     "pi_controller":
     {
         "K_p": 1, 
-        "T_i": 1, 
+        "T_i": 0.8, 
         "init": 0,
         "sat": 12,
         "T_a": 0.3,
