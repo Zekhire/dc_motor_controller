@@ -37,13 +37,13 @@ in_B = 21  # Encoder input B: input GPIO 24 (active high)
 def rotation_decode_A(in_A):
     global counter
     Switch_B = GPIO.input(in_B)
-    counter -= Switch_B
+    counter += Switch_B
     
 
 def rotation_decode_B(in_B):
     global counter
     Switch_A = GPIO.input(in_A)
-    counter += Switch_A
+    counter -= Switch_A
 
 
 def dc_motor_driver(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **kwargs):
