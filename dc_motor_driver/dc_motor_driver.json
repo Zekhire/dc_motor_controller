@@ -18,8 +18,8 @@
     },
     "encoder":
     {
-        "a_pin": 21,
-        "b_pin": 20,
+        "a_pin": 20,
+        "b_pin": 21,
         "ipr": 300
     },
     "tachometer":

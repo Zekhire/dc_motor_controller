@@ -131,7 +131,7 @@ def dc_motor_driver(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **k
         v_s = y_dict_pi_controller["y"][0]  # Control signal 
         
         # Set DC motor direction
-        if v_s > 0:
+        if v_s >= 0:
             GPIO.output(in1, GPIO.HIGH)     # Run forward
             GPIO.output(in2, GPIO.LOW)
         elif v_s < 0:
