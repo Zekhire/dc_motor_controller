@@ -26,6 +26,7 @@ def send(connection, **kwargs):
             print("Prompt desired DC motor speed ([rad/s]):")
             data = input()
             print()
+
             # Convert data to bytes and send to client
             data_frame = convert_to_bytes([data], 64)
 
