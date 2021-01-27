@@ -4,7 +4,8 @@
         "server_ip_old": "192.168.0.103",
         "server_ip_old2": "192.168.1.104",
         "server_ip_o": "192.168.43.249",
-        "server_ip": "192.168.1.105",
+        "server_ip_olderer": "192.168.1.105",
+	"server_ip": "192.168.137.1",
         "server_port": 50001
     },
     "visualization":
