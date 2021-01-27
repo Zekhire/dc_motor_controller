@@ -20,7 +20,7 @@ def emergency(p, in1, in2):
 
 if __name__ == "__main__":
     # Load hardware specs
-    dc_motor_driver_data_path = ".\dc_motor_driver.json"
+    dc_motor_driver_data_path = "dc_motor_driver.json"
     dc_motor_driver_data = json.load(open(dc_motor_driver_data_path))
 
     # Unpack hardware specs
