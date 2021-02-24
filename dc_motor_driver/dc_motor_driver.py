@@ -46,7 +46,7 @@ def rotation_decode_B(in_B):
     counter -= Switch_A
 
 
-def dc_motor_driver(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **kwargs):
+def dc_motor_driver(q_dc2s, q_s2dc, dc_motor_driver_data, rapidly=False, **kwargs):
     global counter
     global counter_old
     # Input desired desired and actual speed to PI controller
@@ -92,7 +92,7 @@ def dc_motor_driver(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **k
     atexit.register(emergency, p, in1, in2)
 
     # Initial w ref value
-    w_ref_sample = 0
+    w_ref_sample = 10
     w_actual_sample = 0
 
     # Get time of script start
@@ -111,7 +111,7 @@ def dc_motor_driver(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **k
 
         # Get sample of w_ref
         try:
-            w_ref_sample_new = q_cli2ss.get(timeout=0)
+            w_ref_sample_new = q_s2dc.get(timeout=0)
         except queue.Empty:
             w_ref_sample_new = w_ref_sample
 
@@ -129,7 +129,7 @@ def dc_motor_driver(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **k
         u_dict = {"e": np.array([w_error])}
         y_dict_pi_controller = pi_controller.simulation_euler_anti_windup(dt, 1, u_dict)
         v_s = y_dict_pi_controller["y"][0]  # Control signal 
-        #print(v_s)
+        print(v_s, "\t", w_actual_sample)
 
         # Set DC motor direction
         if v_s >= 0:
@@ -149,9 +149,9 @@ def dc_motor_driver(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=False, **k
         p.ChangeDutyCycle(dc)
 
         # Send simulation data to client
-        q_ss2cli.put(w_actual_sample)
-        q_ss2cli.put(w_ref_sample)
-        q_ss2cli.put(w_actual_sample_time)
+        q_dc2s.put(w_actual_sample)
+        q_dc2s.put(w_ref_sample)
+        q_dc2s.put(w_actual_sample_time)
 
         # Update time
         w_actual_sample_time_old = w_actual_sample_time
