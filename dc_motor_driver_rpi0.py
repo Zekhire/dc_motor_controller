@@ -24,6 +24,7 @@ if __name__ == "__main__":
                             args=(q_s2dc, q_dc2s, dc_motor_driver_data), 
                             kwargs={"show":True, "debug":debug, "key":key})
 
+    process_server.start()
     key.get()
 
     process_simulated_system = Thread(target=dc_motor_driver, 
@@ -32,7 +33,7 @@ if __name__ == "__main__":
 
 
     process_simulated_system.start()
-    process_server.start()
+    # process_server.start()
 
     # process_simulated_system.join()
     # process_server.join()

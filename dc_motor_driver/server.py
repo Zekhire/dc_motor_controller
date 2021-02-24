@@ -39,7 +39,8 @@ def send(connection, q_ss2cli, **kwargs):
             # Send data to server
             connection.sendall(data_frame)
             if "debug" in kwargs.keys() and kwargs["debug"]:
-                print("Client: Sended", sended, data_sample, round(data_sample_time, 3))
+
+                print("Server: Sended", sended, data_sample, round(data_sample_time, 3), data_frame)
                 sended += 1
                 
 
@@ -67,7 +68,7 @@ def receive(connection, q_s2cm, **kwargs):
                 q_s2cm.put(data0)
 
                 if "debug" in kwargs.keys() and kwargs["debug"]:
-                    print("Client: Received", received, data0)
+                    print("Server: Received", received, data0)
                     received += 1
 
         except socket.error:
