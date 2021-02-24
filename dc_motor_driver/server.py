@@ -35,14 +35,13 @@ def send(connection, q_ss2cli, **kwargs):
 
             # Convert data to bytes and send to server
             data_frame = convert_to_bytes(data, safe_string_length)
-
+            # print(data_frame, end="")
             # Send data to server
             connection.sendall(data_frame)
             if "debug" in kwargs.keys() and kwargs["debug"]:
 
-                print("Server: Sended", sended, data_sample, round(data_sample_time, 3), data_frame)
-                sended += 1
-                
+                print("Server: Sended", sended, data_frame)
+                sended += 1                
 
         except socket.error:                                            # end if socket error
             print('Server: Disconnected with Client!')
@@ -104,7 +103,7 @@ def server(q_ss2cli, q_cli2ss, dc_motor_driver_data, **kwargs):
     if "key" in kwargs.keys() and kwargs["key"]:
         kwargs["key"].put(0)
 
-    send_thread    = threading.Thread(target=send,    args=(connection, q_ss2cli,))
-    receive_thread = threading.Thread(target=receive, args=(connection, q_cli2ss,))
+    send_thread    = threading.Thread(target=send,    args=(connection, q_ss2cli,), kwargs=kwargs)
+    receive_thread = threading.Thread(target=receive, args=(connection, q_cli2ss,), kwargs=kwargs)
     send_thread.start()
     receive_thread.start()
