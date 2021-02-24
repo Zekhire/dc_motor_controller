@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     process_client       = Thread(target=client,        
                                     args=(q_s2cm, monitor_data, ), 
-                                    kwargs={"show":True, "debug":False})
+                                    kwargs={"show":True, "debug":True})
 
     process_visualization = Thread(target=controll_visualization,  
                                     args=(q_s2cm, monitor_data, ), 
