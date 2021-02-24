@@ -26,27 +26,36 @@ def receive(sock, q_cli2ss, **kwargs):
     # Communication loop
     while True:
         try:
-            data_frame = sock.recv(64)                               # receive data (2 floats)
+            data_frame = sock.recv(64)
+            print(received, data_frame)
             if data_frame:
+                # print("", end="")
                 data = data_frame.decode("utf-8")
-                # print(data)
-                data = remove_defective_prefix(data)
+                
+                # print("Client: Received", received, data)
+                # data = remove_defective_prefix(data)
                 # print(data)
                 # print()
                 data_split = data.split()
                 
                 # Unpack data
-                data0 = float(data_split[0])    # w rample
-                data1 = float(data_split[1])    # w_ref sample
-                data2 = float(data_split[2])    # measurement time
+                try:
+                    data0 = float(data_split[0])    # w rample
+                    data1 = float(data_split[1])    # w_ref sample
+                    data2 = float(data_split[2])    # measurement time
+                except IndexError:
+                    print("received", received, data_split)
 
                 # Send data forward
                 data_tuple = (data0, data1, data2)
                 q_cli2ss.put(data_tuple)
+                received += 1
 
                 if "debug" in kwargs.keys() and kwargs["debug"]:
-                    print("Server: Received", received)
+                    print("Client: Received", received)
                     received += 1
+            else:
+                print("dupa")
 
         except socket.error:
             break
