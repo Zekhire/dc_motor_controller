@@ -27,7 +27,7 @@ def receive(sock, q_cli2ss, **kwargs):
     while True:
         try:
             data_frame = sock.recv(64)
-            print(received, data_frame)
+            # print(received, data_frame)
             if data_frame:
                 # print("", end="")
                 data = data_frame.decode("utf-8")
@@ -54,8 +54,6 @@ def receive(sock, q_cli2ss, **kwargs):
                 if "debug" in kwargs.keys() and kwargs["debug"]:
                     print("Client: Received", received)
                     received += 1
-            else:
-                print("dupa")
 
         except socket.error:
             break
