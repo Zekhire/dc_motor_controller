@@ -18,24 +18,30 @@ def convert_to_bytes(data, safe_string_length):
     return data_frame
 
 
-def send(connection, **kwargs):
+def send(connection, q_ss2cli, **kwargs):
+    # Set helping variables
+    safe_string_length = 64
     sended = 1
+
     # Communication loop
     while True:
         try:
-            print("Prompt desired DC motor speed ([rad/s]):")
-            data = input()
-            print()
+            # Get data from AD converter
+            data_sample      = q_ss2cli.get()
+            data_sample_ref  = q_ss2cli.get()
+            data_sample_time = q_ss2cli.get()
 
-            # Convert data to bytes and send to client
-            data_frame = convert_to_bytes([data], 64)
+            data = [data_sample, data_sample_ref, data_sample_time]
 
-            # Send data to client
+            # Convert data to bytes and send to server
+            data_frame = convert_to_bytes(data, safe_string_length)
+
+            # Send data to server
             connection.sendall(data_frame)
-
             if "debug" in kwargs.keys() and kwargs["debug"]:
-                print("Server: Sended", sended)
+                print("Client: Sended", sended, data_sample, round(data_sample_time, 3))
                 sended += 1
+                
 
         except socket.error:                                            # end if socket error
             print('Server: Disconnected with Client!')
@@ -53,17 +59,15 @@ def receive(connection, q_s2cm, **kwargs):
                 data = data_frame.decode("utf-8")
                 data_split = data.split()
                 
-                # Unpack data
-                data0 = float(data_split[0])    # w rample
-                data1 = float(data_split[1])    # w_ref sample
-                data2 = float(data_split[2])    # measurement time
+                try:
+                    data0 = float(data_split[0])    # w rample
+                except ValueError:
+                    continue
 
-                # Send data forward
-                data_tuple = (data0, data1, data2)
-                q_s2cm.put(data_tuple)
+                q_s2cm.put(data0)
 
                 if "debug" in kwargs.keys() and kwargs["debug"]:
-                    print("Server: Received", received)
+                    print("Client: Received", received, data0)
                     received += 1
 
         except socket.error:
@@ -71,7 +75,7 @@ def receive(connection, q_s2cm, **kwargs):
             break
 
 
-def server(q_s2cm, monitor_data, **kwargs):
+def server(q_ss2cli, q_cli2ss, monitor_data, **kwargs):
     if "show" in kwargs.keys() and kwargs["show"]:
         print("Server: Running")
 
@@ -96,7 +100,7 @@ def server(q_s2cm, monitor_data, **kwargs):
     if "show" in kwargs.keys() and kwargs["show"]:
         print('Server: Connected with IP', client_address[0])
 
-    send_thread    = threading.Thread(target=send, args=(connection,))
-    receive_thread = threading.Thread(target=receive, args=(connection,q_s2cm,))
+    send_thread    = threading.Thread(target=send,    args=(connection, q_ss2cli,))
+    receive_thread = threading.Thread(target=receive, args=(connection, q_cli2ss,))
     send_thread.start()
     receive_thread.start()
