@@ -24,7 +24,7 @@
     },
     "tachometer":
     {
-        "Td": 0.04
+        "Td": 0.01
     },
     "ad_converter":
     {
