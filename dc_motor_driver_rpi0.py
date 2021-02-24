@@ -14,7 +14,7 @@ if __name__ == "__main__":
     dc_motor_driver_data_path = "./dc_motor_driver/dc_motor_driver.json"
     dc_motor_driver_data = json.load(open(dc_motor_driver_data_path))
 
-    debug = False
+    debug = True
 
     q_dc2s = Queue()
     q_s2dc = Queue()

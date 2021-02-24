@@ -39,7 +39,7 @@ def send(connection, q_ss2cli, **kwargs):
             # Send data to server
             connection.sendall(data_frame)
             if "debug" in kwargs.keys() and kwargs["debug"]:
-                print("Client: Sended", sended, data_sample, round(data_sample_time, 3))
+                print("Client: Sended", sended, data_sample, round(data_sample_time, 3), data_frame)
                 sended += 1
                 
 
@@ -100,7 +100,7 @@ def server(q_ss2cli, q_cli2ss, monitor_data, **kwargs):
     if "show" in kwargs.keys() and kwargs["show"]:
         print('Server: Connected with IP', client_address[0])
 
-    send_thread    = threading.Thread(target=send,    args=(connection, q_ss2cli,))
-    receive_thread = threading.Thread(target=receive, args=(connection, q_cli2ss,))
+    send_thread    = threading.Thread(target=send,    args=(connection, q_ss2cli,), kwargs=kwargs)
+    receive_thread = threading.Thread(target=receive, args=(connection, q_cli2ss,), kwargs=kwargs)
     send_thread.start()
     receive_thread.start()
