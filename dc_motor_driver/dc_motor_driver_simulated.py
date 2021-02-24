@@ -47,8 +47,8 @@ def dc_motor_driver_simulated(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=
     dc_motor_dt   = dc_motor_data["dt"]
     
     # Get "sampling period"
-    ad_converter_data = dc_motor_driver_data["ad_converter"]
-    Ts = ad_converter_data["Ts"]
+    tachometer_data = dc_motor_driver_data["tachometer"]
+    Td = tachometer_data["Td"]
 
     # Initial w ref value
     w_ref_sample = 0
@@ -68,13 +68,13 @@ def dc_motor_driver_simulated(q_ss2cli, q_cli2ss, dc_motor_driver_data, rapidly=
         # instead of letting every script have its own clock
 
         if rapidly:                                                 # When user want to get reasonable data ASAP
-            dt = Ts                                                 # Set dt as ideal sampling period
+            dt = Td                                                 # Set dt as ideal sampling period
             w_actual_sample_time = w_actual_sample_time_old + dt    # Update time by ideal dt
         else:
             w_actual_sample_time = time.time()
             dt = w_actual_sample_time - w_actual_sample_time_old    # Compute real delta time
 
-        if dt < Ts and rapidly == False:                    # disable this if user want to get reasonable data ASAP
+        if dt < Td and rapidly == False:                    # disable this if user want to get reasonable data ASAP
             continue
 
         # Get sample of w_ref
