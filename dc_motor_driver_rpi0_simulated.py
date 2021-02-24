@@ -6,7 +6,7 @@ from threading import Thread
 import numpy as np
 import json
 
-from dc_motor_driver.dc_motor_driver import dc_motor_driver_simulated
+from dc_motor_driver.dc_motor_driver_simulated import dc_motor_driver_simulated
 from dc_motor_driver.server import server
 
 
