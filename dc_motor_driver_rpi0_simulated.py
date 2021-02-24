@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     process_simulated_system = Thread(target=dc_motor_driver_simulated, 
                                     args=(q_s2dc, q_dc2s, dc_motor_driver_data, False),
-                                    kwargs={"show":True, "debug":debug})
+                                    kwargs={"show":True, "debug":False})
 
 
     process_simulated_system.start()
