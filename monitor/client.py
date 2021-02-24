@@ -16,6 +16,11 @@ def convert_to_bytes(data, safe_string_length):
     return data_frame
 
 
+def remove_defective_prefix(data):
+    data = data.replace("\x00", "")
+    return data
+
+
 def receive(sock, q_cli2ss, **kwargs):
     received = 1
     # Communication loop
@@ -24,6 +29,10 @@ def receive(sock, q_cli2ss, **kwargs):
             data_frame = sock.recv(64)                               # receive data (2 floats)
             if data_frame:
                 data = data_frame.decode("utf-8")
+                # print(data)
+                data = remove_defective_prefix(data)
+                # print(data)
+                # print()
                 data_split = data.split()
                 
                 # Unpack data
@@ -81,12 +90,13 @@ def client(q_s2cm, monitor_data, **kwargs):
     server_address = (server_ip, server_port)                           # IP and port of server
 
     # Try to connect
-    try:
-        sock.connect(server_address)
-        print('Client: Connected with server ' + str(server_address[0]) + '!')
-    except socket.error:                                                # if server is not active
-        print('Client: Run server', server_address[0], 'in order to connect!')
-        exit()
+    while True:
+        try:
+            sock.connect(server_address)
+            print('Client: Connected with server ' + str(server_address[0]) + '!')
+            break
+        except socket.error:                                                # if server is not active
+            print('Client: Run server', server_address[0], 'in order to connect!')
 
     if "show" in kwargs.keys() and kwargs["show"]:
         print("Client: Main loop start")

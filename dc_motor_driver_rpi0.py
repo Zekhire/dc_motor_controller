@@ -18,14 +18,18 @@ if __name__ == "__main__":
 
     q_dc2s = Queue()
     q_s2dc = Queue()
+    key    = Queue()
+
+    process_server = Thread(target=server,
+                            args=(q_s2dc, q_dc2s, dc_motor_driver_data), 
+                            kwargs={"show":True, "debug":debug, "key":key})
+
+    key.get()
 
     process_simulated_system = Thread(target=dc_motor_driver, 
                                     args=(q_s2dc, q_dc2s, dc_motor_driver_data, False),
                                     kwargs={"show":True, "debug":debug})
-                                    
-    process_server           = Thread(target=server,
-                                    args=(q_s2dc, q_dc2s, dc_motor_driver_data), 
-                                    kwargs={"show":True, "debug":debug})
+
 
     process_simulated_system.start()
     process_server.start()
