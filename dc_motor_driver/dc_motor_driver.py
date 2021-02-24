@@ -129,7 +129,7 @@ def dc_motor_driver(q_dc2s, q_s2dc, dc_motor_driver_data, rapidly=False, **kwarg
         u_dict = {"e": np.array([w_error])}
         y_dict_pi_controller = pi_controller.simulation_euler_anti_windup(dt, 1, u_dict)
         v_s = y_dict_pi_controller["y"][0]  # Control signal 
-        print(v_s, "\t", w_actual_sample)
+        # print(v_s, "\t", w_actual_sample)
 
         # Set DC motor direction
         if v_s >= 0:
