@@ -75,12 +75,12 @@ def receive(connection, q_s2cm, **kwargs):
             break
 
 
-def server(q_ss2cli, q_cli2ss, monitor_data, **kwargs):
+def server(q_ss2cli, q_cli2ss, dc_motor_driver_data, **kwargs):
     if "show" in kwargs.keys() and kwargs["show"]:
         print("Server: Running")
 
     # Get connection data
-    server_data = monitor_data["server"]
+    server_data = dc_motor_driver_data["server"]
     server_ip   = server_data["server_ip"]
     server_port = server_data["server_port"]
 
@@ -99,6 +99,9 @@ def server(q_ss2cli, q_cli2ss, monitor_data, **kwargs):
 
     if "show" in kwargs.keys() and kwargs["show"]:
         print('Server: Connected with IP', client_address[0])
+
+    if "key" in kwargs.keys() and kwargs["key"]:
+        kwargs["key"].put(0)
 
     send_thread    = threading.Thread(target=send,    args=(connection, q_ss2cli,))
     receive_thread = threading.Thread(target=receive, args=(connection, q_cli2ss,))
