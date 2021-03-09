@@ -68,7 +68,7 @@ def send(sock, q_tc2c, **kwargs):
     while True:
         try:
             # print("Prompt desired DC motor speed ([rad/s]):")
-            data = input()
+            # data = input()
             data = q_tc2c.get()
             # print(data)
 			# print()
