@@ -22,28 +22,32 @@ sys.path.insert(1, './dc_motor_driver')
 from emergency_script import emergency
 import queue
 
+from functools import partial
+
 # global variables (ultimately veeeeeeeery veeery ugly :<)
 counter_old = 0
 counter = 0
 
 # GPIO Ports
-in_A = 20  # Encoder input A: input GPIO 23 (active high)
-in_B = 21  # Encoder input B: input GPIO 24 (active high)
+#in_A = 20  # Encoder input A: input GPIO 23 (active high)
+#in_B = 21  # Encoder input B: input GPIO 24 (active high)
 
 # Clockwise         +
 # Counter clockwise -
 
 
-def rotation_decode_A(in_A):
+
+def rotation_decode_A(in_A, in_B):
     global counter
     Switch_B = GPIO.input(in_B)
-    counter += Switch_B
-    
+    counter -= Switch_B
 
-def rotation_decode_B(in_B):
+
+def rotation_decode_B(in_B, in_A):
     global counter
     Switch_A = GPIO.input(in_A)
-    counter -= Switch_A
+    counter += Switch_A
+
 
 
 def dc_motor_driver(q_dc2s, q_s2dc, dc_motor_driver_data, rapidly=False, **kwargs):
@@ -80,19 +84,21 @@ def dc_motor_driver(q_dc2s, q_s2dc, dc_motor_driver_data, rapidly=False, **kwarg
 
     # Encoder
     encoder_data = dc_motor_driver_data["encoder"]
+    in_A = encoder_data["a_pin"]
+    in_B = encoder_data["b_pin"]
     ipr = encoder_data["ipr"]
     GPIO.setup(in_A, GPIO.IN)
     GPIO.setup(in_B, GPIO.IN)
 
     # setup an event detection threads for the A and B encoder switches
-    GPIO.add_event_detect(in_A, GPIO.RISING, callback=rotation_decode_A)
-    GPIO.add_event_detect(in_B, GPIO.RISING, callback=rotation_decode_B)
+    GPIO.add_event_detect(in_A, GPIO.RISING, callback=partial(rotation_decode_A, in_B=in_B))
+    GPIO.add_event_detect(in_B, GPIO.RISING, callback=partial(rotation_decode_B, in_A=in_A))
 
     # Set emergency function at script exit
     atexit.register(emergency, p, in1, in2)
 
     # Initial w ref value
-    w_ref_sample = 10
+    w_ref_sample = 0
     w_actual_sample = 0
 
     # Get time of script start
@@ -129,7 +135,8 @@ def dc_motor_driver(q_dc2s, q_s2dc, dc_motor_driver_data, rapidly=False, **kwarg
         u_dict = {"e": np.array([w_error])}
         y_dict_pi_controller = pi_controller.simulation_euler_anti_windup(dt, 1, u_dict)
         v_s = y_dict_pi_controller["y"][0]  # Control signal 
-        # print(v_s, "\t", w_actual_sample)
+        # print(w_ref_sample, "\t", v_s, "\t", w_actual_sample, "\t", w_error)
+        # print(counter)
 
         # Set DC motor direction
         if v_s >= 0:
@@ -168,3 +175,4 @@ if __name__ == "__main__":
     
     dc_motor_driver(queue.Queue(), queue.Queue(),
                     dc_motor_driver_data, show=True, debug=True)
+

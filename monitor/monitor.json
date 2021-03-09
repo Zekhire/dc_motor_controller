@@ -12,5 +12,9 @@
         "last_n": 100,
         "tick_nth": 10,
         "relative_time": true
+    },
+    "thumb":{
+        "max_w_ref": 10,
+        "min_w_ref": 10
     }
 }
