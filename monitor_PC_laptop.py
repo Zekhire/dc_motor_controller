@@ -12,7 +12,7 @@ from monitor.visualization import controll_visualization
 
 if __name__ == "__main__":
     monitor_data_path = "./monitor/monitor.json"
-    monitor_data = json.load(open(monitor_data_path, "r"))
+    monitor_data = json.load(open(monitor_data_path))
 
     q_s2cm = Queue()
 
