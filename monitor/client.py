@@ -62,7 +62,7 @@ def receive(sock, q_cli2ss, **kwargs):
             break
 
 
-def send(sock, **kwargs):
+def send(sock, q_tc2c, **kwargs):
     sended = 1
     # Communication loop
     while True:
@@ -88,7 +88,7 @@ def send(sock, **kwargs):
             break
 
 
-def client(q_tc2c, monitor_data=None, **kwargs):
+def client(q_tc2c, q_s2cm=None, monitor_data=None, **kwargs):
     if "show" in kwargs.keys() and kwargs["show"]:
         print("Client: Running")
 
@@ -113,7 +113,7 @@ def client(q_tc2c, monitor_data=None, **kwargs):
     if "show" in kwargs.keys() and kwargs["show"]:
         print("Client: Main loop start")
 
-    send_thread    = threading.Thread(target=send, args=(sock, ))
+    send_thread    = threading.Thread(target=send, args=(sock, q_tc2c,))
     receive_thread = threading.Thread(target=receive, args=(sock, q_s2cm,))
     send_thread.start()
     receive_thread.start()
