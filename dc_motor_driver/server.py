@@ -39,7 +39,6 @@ def send(connection, q_ss2cli, **kwargs):
             # Send data to server
             connection.sendall(data_frame)
             if "debug" in kwargs.keys() and kwargs["debug"]:
-
                 print("Server: Sended", sended, data_frame)
                 sended += 1                
 
