@@ -11,7 +11,7 @@ from monitor.visualization import controll_visualization
 
 
 if __name__ == "__main__":
-    monitor_data_path = ".\\monitor\\monitor.json"
+    monitor_data_path = "./monitor/monitor.json"
     monitor_data = json.load(open(monitor_data_path))
 
     q_s2cm = Queue()
@@ -25,7 +25,8 @@ if __name__ == "__main__":
                                     kwargs={"show":True, "debug":True})
 
     process_client.start()
-    process_visualization.start()
+    process_visualization.start()  
 
     # process_client.join()
     # process_visualization.join()
+

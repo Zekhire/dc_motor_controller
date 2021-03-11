@@ -46,9 +46,12 @@ def receive(sock, q_cli2ss, **kwargs):
                 except IndexError:
                     print("received", received, data_split)
 
-                # Send data forward
-                data_tuple = (data0, data1, data2)
-                q_cli2ss.put(data_tuple)
+                if q_cli2ss == None:
+                    pass
+                else:
+                    # Send data forward
+                    data_tuple = (data0, data1, data2)
+                    q_cli2ss.put(data_tuple)
                 received += 1
 
                 if "debug" in kwargs.keys() and kwargs["debug"]:
@@ -66,7 +69,9 @@ def send(sock, **kwargs):
         try:
             print("Prompt desired DC motor speed ([rad/s]):")
             data = input()
-            print()
+            # data = q_tc2c.get()
+            # print(data)
+			# print()
 
             # Convert data to bytes and send to client
             data_frame = convert_to_bytes([data], 64)
@@ -83,7 +88,7 @@ def send(sock, **kwargs):
             break
 
 
-def client(q_s2cm, monitor_data, **kwargs):
+def client(q_s2cm=None, monitor_data=None, **kwargs):
     if "show" in kwargs.keys() and kwargs["show"]:
         print("Client: Running")
 
@@ -107,7 +112,6 @@ def client(q_s2cm, monitor_data, **kwargs):
 
     if "show" in kwargs.keys() and kwargs["show"]:
         print("Client: Main loop start")
-
 
     send_thread    = threading.Thread(target=send, args=(sock,))
     receive_thread = threading.Thread(target=receive, args=(sock, q_s2cm,))

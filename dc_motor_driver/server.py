@@ -31,6 +31,8 @@ def send(connection, q_ss2cli, **kwargs):
             data_sample_ref  = q_ss2cli.get()
             data_sample_time = q_ss2cli.get()
 
+            print(data_sample, data_sample_ref, data_sample_time)
+
             data = [data_sample, data_sample_ref, data_sample_time]
 
             # Convert data to bytes and send to server
@@ -62,6 +64,8 @@ def receive(connection, q_s2cm, **kwargs):
                     data0 = float(data_split[0])    # w rample
                 except ValueError:
                     continue
+
+                # print(data0)
 
                 q_s2cm.put(data0)
 
